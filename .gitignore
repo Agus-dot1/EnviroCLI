@@ -39,5 +39,10 @@ services/
 scripts/
 models/
 
+# Publishing
+PUBLISHING.md
+publish/
+dist/
+
 # Scoop
 scoop/

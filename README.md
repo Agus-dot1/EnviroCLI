@@ -97,13 +97,6 @@ Access all features through "Show Environments":
 - Communication Apps - Slack, Zoom, Teams.
 
 
-### Tips for Success
-- Group related applications together
-- Use clear, descriptive names
-- Use clear, descriptive names
-- Your settings are automatically saved
-- Use "Show Environments" to manage your setups
-
 ## Technical Details
 
 - **Configuration**
@@ -138,6 +131,8 @@ We welcome contributions to EnviroCLI! Here's how you can help:
 - Add comments for complex logic
 - Update documentation for new features
 - Include tests when possible
+- Use clear, descriptive names
+- Be sure you understand Spectre.Console documentation
 
 ### Areas for Contribution
 - New features
