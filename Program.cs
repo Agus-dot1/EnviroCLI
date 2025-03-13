@@ -38,6 +38,14 @@ class Program
     {
         try
         {
+            // Ensure config directory exists
+            var configDir = Path.GetDirectoryName(configPath);
+            if (!Directory.Exists(configDir) && configDir != null)
+            {
+                Directory.CreateDirectory(configDir);
+                AnsiConsole.MarkupLine("[blue]Created config directory[/]");
+            }
+
             if (File.Exists(configPath))
             {
                 var jsonString = File.ReadAllText(configPath);
@@ -54,13 +62,20 @@ class Program
                 }
                 return config;
             }
+            else
+            {
+                // Create new config file with empty structure
+                var newConfig = new Config { Environment = new List<Environment>(), LastUsedEnvironment = null };
+                SaveConfig(configPath, newConfig);
+                AnsiConsole.MarkupLine("[blue]Created new config file[/]");
+                return newConfig;
+            }
         }
         catch (Exception ex)
         {
             AnsiConsole.MarkupLine($"[red]Error loading config: {ex.Message}[/]");
+            return new Config { Environment = new List<Environment>(), LastUsedEnvironment = null };
         }
-
-        return new Config { Environment = new List<Environment>(), LastUsedEnvironment = null };
     }
 
     private static void SaveConfig(string configPath, Config config)
