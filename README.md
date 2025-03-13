@@ -2,26 +2,6 @@
 
 A powerful Windows command-line environment manager that helps you organize and launch multiple applications efficiently. Perfect for developers who work with multiple application setups and want to streamline their workflow.
 
-## Features
-
-- **Smart Environment Management**
-  - Create and organize multiple application environments
-  - Quick launch with "Init Last Environment"
-  - Add descriptions for better organization
-  - Persistent storage of settings
-
-## Installation
-
-### Via Scoop (Recommended)
-```powershell
-scoop bucket add enviroCLI https://github.com/Agus-dot1/scoop-enviroCLI
-scoop install enviroCLI
-```
-
-### Manual Installation
-1. Download the latest release
-2. Extract to your desired location
-3. Run `EnviroCLI.exe`
 
 ## Getting Started
 
@@ -43,6 +23,29 @@ The application will automatically:
 3. Launch your environment:
    - Use "Init Last Environment" for quick access (appears after first use)
    - Or select "Show Environments" to view and manage all environments
+
+
+## Features
+
+- **Smart Environment Management**
+  - Create and organize multiple application environments
+  - Quick launch with "Init Last Environment"
+  - Add descriptions for better organization
+  - Persistent storage of settings
+
+## Installation
+
+### Via Scoop (Recommended)
+```powershell
+scoop bucket add enviroCLI https://github.com/Agus-dot1/scoop-enviroCLI
+scoop install enviroCLI
+```
+
+### Manual Installation
+1. Download the latest release
+2. Extract to your desired location
+3. Run `EnviroCLI.exe`
+
 
 ### Configuration
 
