@@ -105,7 +105,7 @@ class Program
         AnsiConsole.Write(new FigletText("EnviroCLI").Color(Color.Blue));
         AnsiConsole.WriteLine();
 
-        var version = new Rule("[blue dim]v0.4.2[/]") { Style = Style.Parse("blue dim") };
+        var version = new Rule("[blue dim]v0.4.3[/]") { Style = Style.Parse("blue dim") };
         version.RightJustified();
         AnsiConsole.Write(version);
         AnsiConsole.WriteLine();

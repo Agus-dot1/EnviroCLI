@@ -10,7 +10,7 @@
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <Version>0.4.2</Version>
+    <Version>0.4.3</Version>
     <Authors>Agus</Authors>
     <Description>A powerful Windows command-line environment manager</Description>
     <ApplicationIcon>assets\icon.ico</ApplicationIcon>
