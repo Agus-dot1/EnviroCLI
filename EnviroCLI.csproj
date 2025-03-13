@@ -13,6 +13,7 @@
     <Version>0.4.2</Version>
     <Authors>Agus</Authors>
     <Description>A powerful Windows command-line environment manager</Description>
+    <ApplicationIcon>assets\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

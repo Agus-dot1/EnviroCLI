@@ -44,5 +44,17 @@ PUBLISHING.md
 publish/
 dist/
 
+# Assets and Design Files
+assets/*
+!assets/icon.ico
+*.psd
+*.ai
+*.sketch
+*.fig
+*.xd
+*.afdesign
+*.svgz
+*.xcf
+
 # Scoop
 scoop/
