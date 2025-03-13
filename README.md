@@ -1,27 +1,37 @@
 # EnviroCLI
 
-A powerful Windows command-line environment manager that helps you organize and launch multiple applications efficiently.
+A powerful Windows command-line environment manager that helps you organize and launch multiple applications efficiently. Perfect for developers who work with multiple application setups and want to streamline their workflow.
 
 ## Features
 
-- **Environment Management**: Create, edit, and delete environment configurations
-- **Quick Launch**: Initialize your last used environment with a single command
-- **App Configuration**: 
-  - Control launch order with visual feedback
-  - Configure application settings
-  - Add descriptions for better organization
-- **Enhanced CLI**: Beautiful console interface using Spectre.Console
+### Core Functionality
+- **Smart Environment Management**
+  - Create, edit, and delete environment configurations
+  - Add detailed descriptions for better organization
+  - Persistent storage of last used environment
+  - JSON-based configuration for easy portability
+
+- **Streamlined Workflow**
+  - Quick launch with "Init Last Environment" feature
+  - Dedicated app management interface
+  - Intuitive main menu focused on fast environment launching
+  - Clear navigation with organized back options
+
+- **Application Control**
+  - Configurable launch order with visual feedback
+  - Comprehensive app configuration options
+  - Executable path validation
+  - Process-level control using System.Diagnostics
 
 ## Requirements
 
 - Windows OS
-- .NET runtime is not required (self-contained executable)
 
 ## Installation
 
 ### Via Scoop (Recommended)
 ```powershell
-scoop bucket add enviroCLI https://github.com/yourusername/scoop-enviroCLI
+scoop bucket add enviroCLI https://github.com/Agus-dot1/scoop-enviroCLI
 scoop install enviroCLI
 ```
 
@@ -37,25 +47,31 @@ scoop install enviroCLI
 1. Launch EnviroCLI
 2. Select "Add Environment" to create your first environment
 3. Add applications with their paths and configurations
-4. Use "Init Last Environment" to quickly launch your setup
+4. Use "Init Last Environment" for quick access to your setup
 
-### Managing Environments
+### Environment Management
 
 Access all management features through the "Show Environments" menu:
-- Add/Edit environment descriptions
-- Modify app configurations
-- Control launch order
-- Delete environments
+- **Environment Configuration**
+  - Add/Edit environment descriptions
+  - Configure application settings
+  - Set launch order preferences
+  - Delete environments
 
-## Experimental Features
+- **Application Settings**
+  - Specify executable paths
+  - Configure window positions
+  - Set launch parameters
+  - Define startup order
 
-### Window Positioning
-EnviroCLI includes experimental support for automatic window positioning:
-- Set custom window positions for each application
-- Special handling for Electron-based apps (VS Code, Edge, Notion)
-- Uses Win32 API for reliable window management
 
-Note: This feature is still in development and may not work consistently across all applications.
+## Technical Details
+
+- **Configuration Storage**: JSON-based using System.Text.Json
+- **Process Management**: System.Diagnostics.Process for reliable app launching
+- **UI Framework**: Spectre.Console for enhanced CLI visuals
+- **Error Handling**: Comprehensive try-catch blocks with user feedback
+
 
 ## Contributing
 
