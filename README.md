@@ -10,12 +10,6 @@ A powerful Windows command-line environment manager that helps you organize and 
   - Add descriptions for better organization
   - Persistent storage of settings
 
-- **Application Control**
-  - Configurable launch order with visual feedback
-  - Window positioning for each application
-  - Special handling for Electron apps (VS Code, Edge, Notion)
-  - Executable path validation
-
 ## Installation
 
 ### Via Scoop (Recommended)
@@ -45,7 +39,6 @@ The application will automatically:
    - Select "Add Environment"
    - Give it a descriptive name (e.g., "Development", "Design")
    - Add applications by providing their executable paths
-
 
 3. Launch your environment:
    - Use "Init Last Environment" for quick access (appears after first use)
