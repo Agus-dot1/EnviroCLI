@@ -38,7 +38,7 @@ class Program
     {
         try
         {
-            // Ensure config directory exists
+          
             var configDir = Path.GetDirectoryName(configPath);
             if (!Directory.Exists(configDir) && configDir != null)
             {
@@ -638,7 +638,7 @@ class Program
         {
             environments.Remove(selectedEnv);
 
-            // If we're deleting the last used environment, clear it
+
             if (jsonData.LastUsedEnvironment == selectedEnv.Name)
             {
                 jsonData.LastUsedEnvironment = null;
@@ -671,7 +671,7 @@ class Program
             AnsiConsole.Clear();
             ShowTitle();
 
-            // Display apps table
+   
             if (env.Apps?.Any() == true)
             {
                 var table = new Table().RoundedBorder();
@@ -726,7 +726,7 @@ class Program
         if (appName == "0")
             return;
 
-        // Try to find matching apps
+   
         var commonApps = FindCommonApps();
         var matchingApps = commonApps
             .Where(a => a.Name.Contains(appName, StringComparison.OrdinalIgnoreCase))
@@ -803,7 +803,7 @@ class Program
             env.Apps.Add(newApp);
             SaveConfig(configPath, config);
 
-            // Update the selectedEnv to reflect changes
+       
             if (selectedEnv.Apps is null)
             {
                 selectedEnv.Apps = new List<App>();
@@ -883,7 +883,6 @@ class Program
                 targetApp.LaunchOrder = newOrder;
                 SaveConfig(configPath, config);
 
-                // Update the selectedEnv to reflect changes
                 app.Name = newName;
                 app.Route = newPath;
                 app.LaunchOrder = newOrder;
@@ -945,7 +944,6 @@ class Program
     {
         var apps = new HashSet<(string Name, string Path)>();
 
-        // Common installation paths for applications
         var commonPaths = new[]
         {
             System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles),
@@ -958,7 +956,6 @@ class Program
             Path.Combine(
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData)
             ),
-            // Add VSCode specific paths
             Path.Combine(
                 System.Environment.GetFolderPath(
                     System.Environment.SpecialFolder.LocalApplicationData
@@ -966,14 +963,11 @@ class Program
                 "Programs",
                 "Microsoft VS Code"
             ),
-            // Add common browser paths
             @"C:\Program Files\Google\Chrome\Application",
             @"C:\Program Files\Mozilla Firefox",
             @"C:\Program Files (x86)\Microsoft\Edge\Application",
-            // Add common dev tool paths
             @"C:\Program Files\Git\cmd",
             @"C:\Program Files\Docker\Docker\resources",
-            // Add common chat apps
             Path.Combine(
                 System.Environment.GetFolderPath(
                     System.Environment.SpecialFolder.LocalApplicationData
@@ -986,7 +980,6 @@ class Program
                 ),
                 "Slack"
             ),
-            // Add gaming paths
             @"C:\Program Files (x86)\Steam",
             @"C:\Program Files\Epic Games\Launcher\Portal\Binaries\Win64",
         };
@@ -1156,7 +1149,7 @@ class Program
     #region Program Entry Point
     static void Main(string[] args)
     {
-        // Use the project's root directory for config
+ 
         string configPath = Path.GetFullPath(
             Path.Combine(Directory.GetCurrentDirectory(), "config", "config.json")
         );
