@@ -24,6 +24,7 @@ scoop install enviroCLI
 
 ### 🛠 Requirements
 - Currently only on windows
+- Performance Note: EnviroCLI has no app limit, but launching many resource-heavy programs at once may slow down low-end systems. This depends on your hardware, not EnviroCLI itself.
 
 ---
 
