@@ -1,142 +1,146 @@
 # EnviroCLI
 
-A powerful Windows command-line environment manager that helps you organize and launch multiple applications efficiently. Perfect for developers who work with multiple application setups and want to streamline their workflow.
+🚀 **Launch Your Entire Workflow with a Single Command**
 
-## Installation
+Tired of manually opening multiple applications every time you start working? **EnviroCLI** is a command-line tool that lets you define and launch entire environments effortlessly—perfect for developers, designers, and multitaskers.
+<p align="center">
+  <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3Vmbm9vYjBtOGR6aTc1ZmhmejJ4d20wNm9vMTk4eXYxM2RhOXJyZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TMwstqmuWCa6YHrvn6/giphy.gif" alt="Enviro demo" />
+</p>
 
-### Via Scoop (Recommended)
+---
+
+## 📥 Installation
+
+### ✅ Via Scoop (Recommended)
 ```powershell
 scoop bucket add enviroCLI https://github.com/Agus-dot1/scoop-enviroCLI
 scoop install enviroCLI
 ```
 
-### Manual Installation
-1. Download the latest release
-2. Extract to your desired location
+### 📦 Manual Installation
+1. Download the latest release from [GitHub Releases](https://github.com/Agus-dot1/EnviroCLI/releases)
+2. Extract it to your desired location
 3. Run `EnviroCLI.exe`
 
+### 🛠 Requirements
+- Currently only on windows
 
-## Getting Started
+---
+
+## 🚀 Getting Started
 
 1. Open your terminal and run:
-```powershell
-EnviroCLI
-```
-The application will automatically:
-- Create a `config` directory in your installation folder
-- Initialize an empty `config.json` file
-- Show the main menu ready for setup
+   ```powershell
+   EnviroCLI
+   ```
+   The application will:
+   - Create a `config` directory in your installation folder
+   - Initialize an empty `config.json` file
+   - Show the main menu ready for setup
 
-2. Create your first environment:
-   - Go to "Show Environments"
-   - Select "Add Environment"
-   - Give it a descriptive name (e.g., "Development", "Design")
-   - Add applications by providing their executable paths
+2. **Create your first environment**:
+   - Navigate to **"Show Environments"**
+   - Select **"Add Environment"**
+   - Name your environment (e.g., "Development", "Gaming")
+   - Add applications by specifying their executable paths
 
-3. Launch your environment:
-   - Use "Init Last Environment" for quick access (appears after first use)
-   - Or select "Show Environments" to view and manage all environments
+3. **Launch your environment**:
+   - Use **"Init Last Environment"** for quick access
+   - Or select **"Show Environments"** to view and manage all environments
 
+---
 
-## Features
+## 🌟 Features
 
-- **Smart Environment Management**
-  - Create and organize multiple application environments
-  - Quick launch with "Init Last Environment"
-  - Add descriptions for better organization
-  - Persistent storage of settings
+✅ **Quick Environment Switching** – Define workspaces and launch them instantly.  
+✅ **Persistent Settings** – Your configurations are saved between sessions.  
+✅ **Interactive CLI** – Uses Spectre.Console for an intuitive user experience.  
+✅ **Custom Launch Order** – Control the startup sequence of apps.  
+✅ **Lightweight & Fast** – No background services, just run and go.  
 
-### Configuration
+---
 
-EnviroCLI automatically manages your configuration:
-- Settings are stored in `config/config.json`
-- The file is created automatically on first run
-- Your environments and preferences are preserved between sessions
-- The config directory is excluded from version control for privacy
+## 🔧 Configuration
 
-### Environment Management
+- All settings are stored in `config/config.json`
+- The file is automatically created on first run
+- Environments and preferences are preserved between sessions
+- The `config` directory is excluded from version control for privacy
 
-Access all features through "Show Environments":
-- **Configure Apps**: Add, remove, or edit applications
-- **Set Launch Order**: Control the startup sequence
-- **Add Descriptions**: Improve organization with clear labels
+---
 
+## 📂 Example Setups
 
-### Example Setups
+### **Development Environment**
+- 💻 Visual Studio Code
+- 🖥️ Windows Terminal
+- 🌐 Browser
+- 🗄️ Database tools (MySQL, MongoDB)
+- 🐳 Docker
+- 🔗 API Client (Postman)
 
-**Development Environment**
-- Visual Studio Code - Code editor
-- Windows Terminal - Command line
-- Browser
-- Database tools - MySQL, MongoDB.
-- Docker
-- API Client (e.g., Postman)
+### **Gaming Environment**
+- 🎮 Steam, Epic Games, Battle.net
+- 🎵 Spotify
+- 🎙 Discord
 
-**Design Workspace**
-- Figma - UI/UX design
-- Browser
-- Image editor - Photoshop, GIMP, Affinity Photo.
-- Font Manager
+### **Work Environment**
+- 📧 Email Client (Outlook, Thunderbird)
+- 🌐 Browser
+- 📊 Spreadsheet Software (Excel, LibreOffice Calc)
+- 📅 Task Manager (Notion, Todoist, Trello)
+- 💬 Communication Apps (Slack, Zoom, Teams)
 
-**Gaming Environment**
-- Game Launcher - Steam, Epic Games, Battle.net.
-- Spotify - Music
-- Voice Chat - Discord, Teamspeak.
+---
 
-**Work Environment**
-- Email Client - Outlook, Thunderbird.
-- Browser
-- Word Processor - Microsoft Word, LibreOffice Writer.
-- SpreadSheet Software - Microsoft Excel, LibreOffice Calc.
-- Task Manager - Notion, Todoist, Trello.
-- Communication Apps - Slack, Zoom, Teams.
+## 🔍 Technical Details
 
+### **Configuration**
+- JSON-based using `System.Text.Json`
+- Automatic config directory creation
+- Error handling with user feedback
+- Persistent settings storage
 
-## Technical Details
+### **Process Management**
+- Uses `System.Diagnostics.Process` for launching applications
+- Executable path validation
+- Optimized process creation
 
-- **Configuration**
-  - JSON-based using System.Text.Json
-  - Automatic config directory creation
-  - Error handling with user feedback
-  - Settings persistence between sessions
+### **User Interface**
+- Fully interactive CLI built with `Spectre.Console`
+- Organized tables and visual feedback
+- Clean console management
 
-- **Process Management**
-  - System.Diagnostics.Process for app launching
-  - Executable path validation
-  - Process creation optimizations
+---
 
-- **User Interface**
-  - Interactive CLI using Spectre.Console
-  - Organized tables and visual feedback
-  - Clean console management
-
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions to EnviroCLI! Here's how you can help:
 
-### Development Setup
-1. Fork the repository
-2. Clone your fork
-3. Create a new branch for your feature
-4. Make your changes
-5. Submit a pull request
+### 📌 Development Setup
+1. **Fork the repository**
+2. **Clone your fork**
+3. **Create a new branch** for your feature
+4. **Make your changes**
+5. **Submit a pull request**
 
-### Code Guidelines
-- Follow C# coding conventions
-- Add comments for complex logic
-- Update documentation for new features
-- Include tests when possible
-- Use clear, descriptive names
-- Be sure you understand Spectre.Console documentation
+### 📜 Code Guidelines
+- Follow **C# coding conventions**
+- Add **comments for complex logic**
+- Update **documentation** for new features
+- Include **tests** when possible
+- Use **clear, descriptive names**
+- Familiarize yourself with **Spectre.Console documentation**
 
-### Areas for Contribution
-- New features
-- Bug fixes
-- Documentation improvements
-- Performance optimizations
+### 🚀 Areas for Contribution
+- 🆕 New features
+- 🐞 Bug fixes
+- 📖 Documentation improvements
+- ⚡ Performance optimizations
 
-For major changes, please open an issue first to discuss what you would like to change.
+---
 
-## License
+## 📜 License
 
 [MIT](LICENSE)
+
