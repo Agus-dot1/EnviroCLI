@@ -98,7 +98,6 @@ scoop install enviroCLI
 
 ### **Configuration**
 - JSON-based using `System.Text.Json`
-- Automatic config directory creation
 - Error handling with user feedback
 - Persistent settings storage
 
