@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Spectre.Console;
+using System.Diagnostics;
+using System.Text.Json;
 using Color = Spectre.Console.Color;
 
 namespace EnviroCLI;
@@ -21,7 +16,7 @@ public class App
 public class Environment
 {
     public string? Name { get; set; } = string.Empty;
-    public List<App>? Apps { get; set; } = new List<App>();
+    public List<App>? Apps { get; set; } = [];
 }
 
 public class Config
@@ -34,42 +29,73 @@ public class Config
 class Program
 {
     #region Configuration Management
+    static void Main()
+    {
+        string configPath = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "config",
+            "config.json"
+        );
+
+        var configDir = Path.GetDirectoryName(configPath);
+        if (!Directory.Exists(configDir) && configDir != null)
+        {
+            Directory.CreateDirectory(configDir);
+        }
+
+        Config config = LoadConfig(configPath);
+        string? lastUsedEnv = config.LastUsedEnvironment;
+
+        while (true)
+        {
+            AnsiConsole.Clear();
+            ShowTitle();
+
+            string option = ShowMainMenu(lastUsedEnv);
+
+            switch (option)
+            {
+                case var o when o.StartsWith("Init Last Environment"):
+                    if (lastUsedEnv is not null)
+                    {
+                        InitializeEnvironment(configPath, lastUsedEnv);
+                    }
+                    else
+                    {
+                        AnsiConsole.MarkupLine("[yellow]No environment has been used yet.[/]");
+                        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
+                        Console.ReadKey();
+                    }
+                    break;
+                case "Show Environments":
+                    ManageEnvironments(configPath, ref lastUsedEnv);
+                    break;
+                case "Exit":
+                    AnsiConsole.MarkupLine("[green]Thanks for using EnviroCLI![/]");
+                    return;
+            }
+        }
+    }
+
+    private static readonly JsonSerializerOptions options = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true,
+    };
+
+
     private static Config LoadConfig(string configPath)
     {
         try
         {
-          
-            var configDir = Path.GetDirectoryName(configPath);
-            if (!Directory.Exists(configDir) && configDir != null)
-            {
-                Directory.CreateDirectory(configDir);
-                AnsiConsole.MarkupLine("[blue]Created config directory[/]");
-            }
-
             if (File.Exists(configPath))
             {
                 var jsonString = File.ReadAllText(configPath);
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    WriteIndented = true,
-                };
-
                 var config = JsonSerializer.Deserialize<Config>(jsonString, options);
-                if (config?.Environment == null)
-                {
-                    config = new Config { Environment = new List<Environment>() };
-                }
-                return config;
+                return config ?? CreateDefaultConfig(configPath);
             }
-            else
-            {
-                // Create new config file with empty structure
-                var newConfig = new Config { Environment = new List<Environment>(), LastUsedEnvironment = null };
-                SaveConfig(configPath, newConfig);
-                AnsiConsole.MarkupLine("[blue]Created new config file[/]");
-                return newConfig;
-            }
+
+            return CreateDefaultConfig(configPath);
         }
         catch (Exception ex)
         {
@@ -78,16 +104,21 @@ class Program
         }
     }
 
+    private static Config CreateDefaultConfig(string configPath)
+    {
+        var newConfig = new Config
+        {
+            Environment = new List<Environment>(),
+            LastUsedEnvironment = null,
+        };
+        SaveConfig(configPath, newConfig);
+        return newConfig;
+    }
+
     private static void SaveConfig(string configPath, Config config)
     {
         try
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                WriteIndented = true,
-            };
-
             var jsonString = JsonSerializer.Serialize(config, options);
             File.WriteAllText(configPath, jsonString);
         }
@@ -166,6 +197,13 @@ class Program
         if (selectedEnv is null)
         {
             AnsiConsole.MarkupLine("[red]Environment not found.[/]");
+            Thread.Sleep(1500);
+            return;
+        }
+        if (selectedEnv.Apps.Count is 0)
+        {
+            AnsiConsole.MarkupLine("[red]No apps found in the selected environment.[/]");
+            Thread.Sleep(1500);
             return;
         }
 
@@ -256,14 +294,13 @@ class Program
                     .HighlightStyle(new Style(foreground: Color.Blue))
                     .UseConverter(x => x)
                     .AddChoices(
-                        new[]
-                        {
+                        [
                             "Initialize Environment",
                             "Add Environment",
                             "Edit Environment",
                             "Delete Environment",
                             "Back",
-                        }
+                        ]
                     )
             );
 
@@ -273,7 +310,7 @@ class Program
                     var config = LoadConfig(configPath);
                     var environments = config.Environment ?? new List<Environment>();
 
-                    if (!environments.Any())
+                    if (environments.Count == 0)
                     {
                         AnsiConsole.MarkupLine("[red]No environments found.[/]");
                         break;
@@ -325,13 +362,19 @@ class Program
             AnsiConsole.MarkupLine("[red]The config file doesn't exist[/]");
             return;
         }
+        string jsonContent = File.ReadAllText(configPath);
+        Config? configData = JsonSerializer.Deserialize<Config>(jsonContent);
+        List<Environment> environments = configData?.Environment ?? new List<Environment>();
+
+        if (environments is null)
+        {
+            return;
+        }
 
         var table = new Table().RoundedBorder();
         table.AddColumn("Environment");
         table.AddColumn("Apps (Launch Order)");
-        string jsonContent = File.ReadAllText(configPath);
-        Config? configData = JsonSerializer.Deserialize<Config>(jsonContent);
-        List<Environment> environments = configData?.Environment ?? new List<Environment>();
+
 
         foreach (var env in environments)
         {
@@ -368,7 +411,7 @@ class Program
                     .Title("[blue]What would you like to do?[/]")
                     .PageSize(10)
                     .HighlightStyle(new Style(foreground: Color.Blue))
-                    .AddChoices(new[] { "Add App", "Finish" })
+                    .AddChoices(["Add App", "Finish"])
             );
 
             if (action == "Finish")
@@ -377,13 +420,10 @@ class Program
                 break;
             }
 
-            var appName = AnsiConsole.Ask<string>("[white]App name:[/]");
-            if (string.IsNullOrWhiteSpace(appName))
-            {
-                continue;
-            }
+            var appName = AnsiConsole.Ask<string>("[white]App name[grey](Type 0 to go back)[/]:[/]");
+            if (appName == "0")
+                return;
 
-            // Try to find matching apps
             var commonApps = FindCommonApps();
             var matchingApps = commonApps
                 .Where(a => a.Name.Contains(appName, StringComparison.OrdinalIgnoreCase))
@@ -391,7 +431,7 @@ class Program
 
             string? appPath = null;
 
-            if (matchingApps.Any())
+            if (matchingApps.Count != 0)
             {
                 var choices = matchingApps.Select(a => $"{a.Name} ({a.Path})").ToList();
                 choices.Insert(0, "manual");
@@ -399,7 +439,7 @@ class Program
                 var selection = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title(
-                            "[blue]Select application path (or type 'manual' for custom path):[/]"
+                            "[blue]Select application path (if the app is not on the list, select 'manual' for custom path):[/]"
                         )
                         .PageSize(15)
                         .HighlightStyle(new Style(foreground: Color.Blue))
@@ -418,19 +458,26 @@ class Program
 
             if (appPath == null)
             {
-                appPath = AnsiConsole.Ask<string>("[white]App path (press Enter to go back):[/]");
+                AnsiConsole.MarkupLine(
+                    $"We couldn't find the path for {appName}, please enter it manually"
+                );
+                appPath = AnsiConsole.Ask<string>("[white]App path (press 0 to go back):[/]");
                 if (string.IsNullOrWhiteSpace(appPath))
                 {
-                    continue;
+                    return;
                 }
             }
 
-            if (!File.Exists(appPath))
+            if (appPath != "0")
             {
-                AnsiConsole.MarkupLine(
-                    $"[red]The file '{appPath}' does not exist. Please provide a valid path.[/]"
-                );
-                continue;
+                if (!File.Exists(appPath))
+                {
+                    AnsiConsole.MarkupLine(
+                        $"[red]The file '{appPath}' does not exist. Please provide a valid path.[/]"
+                    );
+                    appPath = AnsiConsole.Ask<string>("[white]App path (press 0 to go back):[/]");
+                    continue;
+                }
             }
 
             var launchOrderPrompt = AnsiConsole.Prompt(
@@ -441,7 +488,7 @@ class Program
                     .ValidationErrorMessage("[red]Please enter a valid number or 'b' to go back[/]")
                     .Validate(input =>
                     {
-                        if (input.Trim().ToLower() == "b")
+                        if (input.Trim().Equals("b", StringComparison.CurrentCultureIgnoreCase))
                             return ValidationResult.Success();
                         if (int.TryParse(input, out int value))
                             return ValidationResult.Success();
@@ -449,7 +496,7 @@ class Program
                     })
             );
 
-            if (launchOrderPrompt.Trim().ToLower() == "b")
+            if (launchOrderPrompt.Trim().Equals("b", StringComparison.CurrentCultureIgnoreCase))
             {
                 continue;
             }
@@ -506,9 +553,10 @@ class Program
         Config jsonData = LoadConfig(configPath);
         List<Environment> environments = jsonData.Environment ?? new List<Environment>();
 
-        if (!environments.Any())
+        if (environments.Count == 0)
         {
             AnsiConsole.MarkupLine("[red]No environments found.[/]");
+            Thread.Sleep(1500);
             return;
         }
 
@@ -539,6 +587,7 @@ class Program
         if (selectedEnv is null)
         {
             AnsiConsole.MarkupLine("[red]Environment not found.[/]");
+            Thread.Sleep(1500);
             return;
         }
 
@@ -554,6 +603,7 @@ class Program
         else
         {
             AnsiConsole.MarkupLine("[red]No apps found in the selected environment.[/]");
+            Thread.Sleep(1500);
         }
 
         var option = AnsiConsole.Prompt(
@@ -575,6 +625,7 @@ class Program
                 else
                 {
                     AnsiConsole.MarkupLine("[red]Invalid environment name.[/]");
+                    Thread.Sleep(1500);
                 }
                 break;
             case "Environment Apps":
@@ -594,9 +645,10 @@ class Program
         Config jsonData = LoadConfig(configPath);
         List<Environment> environments = jsonData.Environment ?? new List<Environment>();
 
-        if (!environments.Any())
+        if (environments.Count == 0)
         {
             AnsiConsole.MarkupLine("[red]No environments found.[/]");
+            Thread.Sleep(1500);
             return;
         }
 
@@ -627,6 +679,7 @@ class Program
         if (selectedEnv is null)
         {
             AnsiConsole.MarkupLine("[red]Selected environment not found.[/]");
+            Thread.Sleep(1500);
             return;
         }
 
@@ -638,7 +691,6 @@ class Program
         {
             environments.Remove(selectedEnv);
 
-
             if (jsonData.LastUsedEnvironment == selectedEnv.Name)
             {
                 jsonData.LastUsedEnvironment = null;
@@ -646,6 +698,7 @@ class Program
 
             SaveConfig(configPath, jsonData);
             AnsiConsole.MarkupLine("[green]Environment deleted successfully![/]");
+            Thread.Sleep(1500);
         }
     }
     #endregion
@@ -671,8 +724,7 @@ class Program
             AnsiConsole.Clear();
             ShowTitle();
 
-   
-            if (env.Apps?.Any() == true)
+            if (env.Apps.Count != 0)
             {
                 var table = new Table().RoundedBorder();
                 table.AddColumn("Order");
@@ -700,7 +752,7 @@ class Program
                     .Title("[blue]Environment Apps[/]")
                     .PageSize(10)
                     .HighlightStyle(new Style(foreground: Color.Blue))
-                    .AddChoices(new[] { "Add App", "Edit App", "Delete App", "Back" })
+                    .AddChoices(["Add App", "Edit App", "Delete App", "Back"])
             );
 
             switch (choice)
@@ -726,7 +778,6 @@ class Program
         if (appName == "0")
             return;
 
-   
         var commonApps = FindCommonApps();
         var matchingApps = commonApps
             .Where(a => a.Name.Contains(appName, StringComparison.OrdinalIgnoreCase))
@@ -734,7 +785,7 @@ class Program
 
         string? appPath = null;
 
-        if (matchingApps.Any())
+        if (matchingApps.Count != 0)
         {
             var choices = new List<string>();
             choices.Add("Enter path manually");
@@ -762,18 +813,31 @@ class Program
 
         if (appPath == null)
         {
-            appPath = AnsiConsole.Ask<string>("[white]App path:[/]");
-        }
-        if (!File.Exists(appPath))
-        {
             AnsiConsole.MarkupLine(
-                $"[red]The file '{appPath}' does not exist. Please provide a valid path.[/]"
+                $"We couldn't find the path for {appName}, please enter it manually"
             );
-            return;
+            appPath = AnsiConsole.Ask<string>("[white]App path (press 0 to go back):[/]");
+            if (appPath == "0")
+            {
+                return;
+            }
+        }
+
+
+        if (appPath != "0")
+        {
+            if (!File.Exists(appPath))
+            {
+                AnsiConsole.MarkupLine(
+                    $"[red]The file '{appPath}' does not exist. Please provide a valid path.[/]"
+                );
+                appPath = AnsiConsole.Ask<string>("[white]App path (press 0 to go back):[/]");
+                return;
+            }
         }
 
         var maxOrder =
-            selectedEnv.Apps?.Any() == true ? selectedEnv.Apps.Max(a => a.LaunchOrder) : 0;
+            selectedEnv.Apps.Count != 0 ? selectedEnv.Apps.Max(a => a.LaunchOrder) : 0;
         var launchOrder = AnsiConsole.Ask<int>(
             $"[white]Launch order (current max: {maxOrder}):[/]",
             maxOrder + 1
@@ -803,7 +867,6 @@ class Program
             env.Apps.Add(newApp);
             SaveConfig(configPath, config);
 
-       
             if (selectedEnv.Apps is null)
             {
                 selectedEnv.Apps = new List<App>();
@@ -811,13 +874,13 @@ class Program
             selectedEnv.Apps.Add(newApp);
 
             AnsiConsole.MarkupLine($"[green]Added {appName} successfully![/]");
-            System.Threading.Thread.Sleep(1000);
+            Thread.Sleep(1000);
         }
     }
 
     private static void EditApp(string configPath, Environment selectedEnv)
     {
-        if (selectedEnv.Apps is null || !selectedEnv.Apps.Any())
+        if (selectedEnv.Apps is null || selectedEnv.Apps.Count == 0)
         {
             AnsiConsole.MarkupLine("[yellow]No apps to edit.[/]");
             return;
@@ -828,7 +891,7 @@ class Program
             .Select(a => a.Name!)
             .ToList();
 
-        if (!appChoices.Any())
+        if (appChoices.Count == 0)
         {
             AnsiConsole.MarkupLine("[yellow]No valid apps to edit.[/]");
             return;
@@ -892,7 +955,7 @@ class Program
 
     private static void DeleteApp(string configPath, Environment selectedEnv)
     {
-        if (selectedEnv.Apps is null || !selectedEnv.Apps.Any())
+        if (selectedEnv.Apps is null || selectedEnv.Apps.Count == 0)
         {
             AnsiConsole.MarkupLine("[yellow]No apps to delete.[/]");
             return;
@@ -903,7 +966,7 @@ class Program
             .Select(a => a.Name!)
             .ToList();
 
-        if (!appChoices.Any())
+        if (appChoices.Count == 0)
         {
             AnsiConsole.MarkupLine("[yellow]No valid apps to delete.[/]");
             return;
@@ -1086,106 +1149,6 @@ class Program
             && !fileName.Equals("cmd", StringComparison.OrdinalIgnoreCase)
             && !fileName.EndsWith(".tmp")
             && !fileName.EndsWith(".cache");
-    }
-
-    private static string? SelectAppPath(string appName)
-    {
-        AnsiConsole.MarkupLine($"[grey]Searching for apps matching '{appName}'...[/]");
-        var commonApps = FindCommonApps();
-        if (!commonApps.Any())
-        {
-            AnsiConsole.MarkupLine("[yellow]No applications found. Please enter path manually.[/]");
-            return null;
-        }
-
-        var matchingApps = commonApps
-            .Where(a => a.Name.Contains(appName, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-
-        string? appPath = null;
-
-        if (matchingApps.Any())
-        {
-            var choices = matchingApps.Select(a => $"{a.Name} ({a.Path})").ToList();
-            choices.Insert(0, "manual");
-
-            var selection = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("[blue]Select application path (or type 'manual' for custom path):[/]")
-                    .PageSize(15)
-                    .HighlightStyle(new Style(foreground: Color.Blue))
-                    .AddChoices(choices)
-            );
-
-            if (selection == "manual")
-            {
-                return null;
-            }
-
-            appPath = matchingApps.First(a => selection.StartsWith($"{a.Name} (")).Path;
-        }
-
-        if (appPath == null)
-        {
-            appPath = AnsiConsole.Ask<string>("[white]App path (press Enter to go back):[/]");
-            if (string.IsNullOrWhiteSpace(appPath))
-            {
-                return null;
-            }
-        }
-
-        if (!File.Exists(appPath))
-        {
-            AnsiConsole.MarkupLine(
-                $"[red]The file '{appPath}' does not exist. Please provide a valid path.[/]"
-            );
-            return null;
-        }
-
-        return appPath;
-    }
-    #endregion
-
-    #region Program Entry Point
-    static void Main(string[] args)
-    {
- 
-        string configPath = Path.GetFullPath(
-            Path.Combine(Directory.GetCurrentDirectory(), "config", "config.json")
-        );
-
-        Config config = LoadConfig(configPath);
-        string? lastUsedEnv = config.LastUsedEnvironment;
-
-        while (true)
-        {
-            AnsiConsole.Clear();
-            ShowTitle();
-
-            string option = ShowMainMenu(lastUsedEnv);
-
-            switch (option)
-            {
-                case var o when o.StartsWith("Init Last Environment"):
-                    if (lastUsedEnv is not null)
-                    {
-                        InitializeEnvironment(configPath, lastUsedEnv);
-                    }
-                    else
-                    {
-                        AnsiConsole.MarkupLine("[yellow]No environment has been used yet.[/]");
-                        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
-                        Console.ReadKey(true);
-                    }
-                    break;
-                case "Show Environments":
-                    ManageEnvironments(configPath, ref lastUsedEnv);
-                    break;
-                case "Exit":
-                    AnsiConsole.MarkupLine("[green]Thanks for using EnviroCLI![/]");
-                    return;
-            }
-        }
     }
     #endregion
 }
