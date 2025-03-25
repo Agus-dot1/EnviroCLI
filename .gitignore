@@ -33,11 +33,7 @@ _ReSharper*/
 *.DotSettings.user
 
 # Project folders
-utils/
-ui/
-services/
 scripts/
-models/
 
 # Publishing
 PUBLISHING.md
