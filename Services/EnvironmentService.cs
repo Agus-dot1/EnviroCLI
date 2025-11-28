@@ -1,4 +1,4 @@
-﻿using EnviroCLI.Models;
+using EnviroCLI.Models;
 using Spectre.Console;
 using System.Diagnostics;
 using System.Text.Json;
@@ -111,7 +111,19 @@ namespace EnviroCLI.Services
             {
                 AnsiConsole.Clear();
                 ShowTitle();
-                EnvironmentList(configPath);
+
+                string jsonContent = File.ReadAllText(configPath);
+                Config? configData = JsonSerializer.Deserialize<Config>(jsonContent);
+                List<Environment> environments = configData?.Environment ?? new List<Environment>();
+
+                if (environments.Count == 0)
+                {
+                    AnsiConsole.MarkupLine("\n[blue]No environments found. Please add an environment.[/]");
+                }
+                else
+                {
+                    EnvironmentList(configPath);
+                }
 
                 var option = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
@@ -121,7 +133,7 @@ namespace EnviroCLI.Services
                         .UseConverter(x => x)
                         .AddChoices(
                             [
-                                "Initialize Environment",
+                            "Initialize Environment",
                             "Add Environment",
                             "Edit Environment",
                             "Delete Environment",
@@ -133,9 +145,6 @@ namespace EnviroCLI.Services
                 switch (option)
                 {
                     case "Initialize Environment":
-                        var config = LoadConfig(configPath);
-                        var environments = config.Environment ?? new List<Environment>();
-
                         if (environments.Count == 0)
                         {
                             AnsiConsole.MarkupLine("[red]No environments found.[/]");

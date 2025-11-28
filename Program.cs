@@ -2,8 +2,8 @@ using EnviroCLI.Models;
 using EnviroCLI.Services;
 using Spectre.Console;
 using static EnviroCLI.Services.EnvironmentService;
+using static EnviroCLI.Services.PreferenceService;
 using static EnviroCLI.UI.ConsoleUI;
-
 
 namespace EnviroCLI;
 
@@ -30,7 +30,7 @@ class Program : ConfigurationService
         {
             AnsiConsole.Clear();
             ShowTitle();
-            string option = ShowMainMenu(lastUsedEnv);
+            string option = ShowMainMenu(lastUsedEnv, configPath);
 
             switch (option)
             {
@@ -48,6 +48,9 @@ class Program : ConfigurationService
                     break;
                 case "Show Environments":
                     ManageEnvironments(configPath, ref lastUsedEnv);
+                    break;
+                case "Preferences":
+                    ManagePreferences(configPath);
                     break;
                 case "Exit":
                     AnsiConsole.MarkupLine("[green]Thanks for using EnviroCLI![/]");

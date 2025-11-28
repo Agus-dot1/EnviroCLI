@@ -1,5 +1,8 @@
-﻿using Spectre.Console;
+using EnviroCLI.Models;
+using Spectre.Console;
+using static EnviroCLI.Services.ConfigurationService;
 using Color = Spectre.Console.Color;
+
 
 namespace EnviroCLI.UI
 {
@@ -39,9 +42,15 @@ namespace EnviroCLI.UI
             AnsiConsole.WriteLine();
         }
 
-        public static string ShowMainMenu(string? lastUsedEnv)
+        public static string ShowMainMenu(string? lastUsedEnv, string configPath)
         {
-            ShowWelcomeMessage();
+            Config config = LoadConfig(configPath);
+
+            if (config.Tutorial)
+            {
+                ShowWelcomeMessage();
+            }
+
             var prompt = new SelectionPrompt<string>()
                 .Title("[blue]Select an option[/]")
                 .PageSize(10)
@@ -53,6 +62,7 @@ namespace EnviroCLI.UI
                         ? $"Init Last Environment ({lastUsedEnv})"
                         : "Init Last Environment",
                     "Show Environments",
+                    "Preferences",
                     "Exit",
                     }
                 );
