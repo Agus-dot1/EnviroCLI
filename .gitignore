@@ -18,6 +18,7 @@ bld/
 
 # User-specific files
 config/config.json
+ROADMAP.md
 
 # .NET Core
 project.lock.json
