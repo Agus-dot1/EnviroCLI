@@ -19,7 +19,8 @@
 
 EnviroCLI is a Windows tool to launch groups of applications at once. You can define environments (like "Development" or "Gaming") and start all associated apps in the order you want. It works from the command line and keeps everything in a local JSON file.
 
-```    ▶—————————————————————————▶——————————————————————————                   
+```
+       ▶—————————————————————————▶——————————————————————————                   
         |                          |                           |
         |                          |                           |
 ┌─────────────────┐      ┌────────────────────┐      ┌──────────────────┐
